@@ -1,0 +1,91 @@
+---
+title: "Shiny Bandit"
+author: "Nathaniel Phillips"
+date: "18 January 2017"
+output: html_document
+bibliography: bibliography.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Task Description
+
+This app runs a standard (3-armed) bandit task. The bandit task is a prototypical example of a *reinforcement learning* task, where decision makers need to maximize their resources by strategically interacting with an uncertain environment [@sutton1998reinforcement].
+
+In the task, players are presented with options (in this case, 3) represented as boxes. The boxes contain many tickets. Each ticket has a point value written on it ranging from -100 to +100. Tickets with high positive values are valuable and result in points, while tickets with low negative values are to be avoided as they remove points.
+
+Each box has its own distribution of tickets. However, players do not know for sure what the distribution of ticket values is in each box. Some boxes may have higher ticket values on average than others, and some may have more variable ticket values than others.
+
+Players have a fixed (e.g.; 50) number of trials where they can select a box and draw a random ticket. When a ticket is drawn, the point value on the ticket is displayed and its value is added (or subtracted) to the player's cumulative point total. The ticket is then returned to the box. 
+When the final trial is completed, the game is over.
+
+Players play the game several times. The distributions (boxes) are the same in each game. However, their location is randomly determined at the start of each game. Therefore, while players can learn about the overall decision environment from one game to another, they will always have to learn which option is which in each game.
+
+## Examples
+
+Here are some examples of ShinyBandit you can play right now!
+
+| Name| Link| Code | 
+|:----------------------|:---------------|:--------------|
+|     3 Armed Bandit| [Game Link](https://econpsychbasel.shinyapps.io/ShinyBandit/)| [GitHub Source Code](https://github.com/ndphillips/ShinyBandit/blob/master/ShinyBandit_app.R)|
+
+# Using the Application
+
+The game is stored in the `ShinyBandit_app.R` file. The app is separated into several sections:
+
+| Section|  Description
+|:-----------------|:------------------------------------- | 
+| 0: Load Libraries| Load all libraries necessary to run the application. Be sure to include `shiny` for all Shiny functions, `rdrop2` for Dropbox integration, and `sendmailR` for sending data as emails.|
+| A: Setup the game| Define game parameters (A1), define how data will be saved (A2)|
+| B: Overall Layout | Define the app title and add custom CSS tags.|
+| C: Reactive Values |Define the reactive values which store user inputs throughout the game. `CurrentValues` stores up-to-date (scaler) values of critical game parameters, while `GameValues` stores historical (vector) data|
+| D: Page Layouts | The content and layout of distinct pages (e.g.; welcome page, instructions page, game page) |
+| E: Game Display | The main game display an |
+| F: Event (button) actions | Define the result of buttons such as page navigation (F1), option selection (F2), and event tracking (F3)|
+| G: Save data | Define how data is saved and exported|
+
+## A: Game parameters
+
+Here is a list of the major game parameters you can change.
+
+| Parameter| Class| Description
+|:------|---------- |:---------------------------------------|
+|     `distributions`| matrix |  Population distributions of outcomes for options. Each columnn is an option.|
+|     `trials.max`| integer |   Maximum number of trials in each game|
+|     `games.n` |   integer | Number of games to be played|
+|     `randomize.locations`| logical |  Should the locations of options be randomized each game?|
+|     `randomize.outcomes`| logical |  Should the order of outcomes within each option be randomized each game?|
+
+## Changing the number of options
+
+By default, the game has 3 options. To change the number of options, you must make two changes:
+
+1. Make sure the number of columns in the `distributions` matrix is equal to the number of options you want.
+2. Change the `actionButtons` contained in the game page (Section D). For example, for a game with 2 options, include only two buttons (e.g.; `selectA` and `selectB`). For a game with 5 options, include buttons for all 5 options.
+3. In section F2, add (or subtract) appropriate `observeEvent()` calls to track all options.
+
+# Saving Data
+
+I know of two methods to save data from the experiment: uploading directly to Dropbox, and email.
+
+### Uploading data to Dropbox
+
+In order to upload data to Dropbox, you must include a file called `droptoken.rds` containing your dropbox authentication token. This file must be in the same folder as the main application file `ShinyBanditMulti_app.R`. You can create this file by running the following:
+
+```{r eval = FALSE}
+install.packages("rdrop2")                 # install rdrop2 package
+droptoken <- rdrop2::drop_auth()           # Will open a browser and ask you to login
+saveRDS(droptoken, file = "droptoken.rds") # Save token as droptoken.rds
+```
+
+You can specify the folder to save your data in with the `outputDir` object (This object will later on be passed to the `rdrop2::drop_upload()` function when it is time to actually save the data). For example, `outputDir <- "ShinyApp/data"` will save the data to a data folder contained in a ShinyApp folder. 
+
+### Emailing data
+
+You can have the server automatically email data to you as an attachment using the `sendmailR` package. I'm still working on getting this to work...
+
+## Notes
+
+# References

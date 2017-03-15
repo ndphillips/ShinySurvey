@@ -1,0 +1,11 @@
+name: ShinyBandit
+title: ShinyBandit
+account: econpsychbasel
+server: shinyapps.io
+appId: 151552
+bundleId: 689372
+url: https://econpsychbasel.shinyapps.io/ShinyBandit/
+when: 1485263438.40978
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: bibliography.bib|readme.html|readme.Rmd
